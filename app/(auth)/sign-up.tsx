@@ -179,7 +179,13 @@ const SignUp = () => {
 
               <Text className="text-base text-gray-400 text-center mt-2">You have successfully verified your account.</Text>
 
-              <CustomButton title="Browser Home" onPress={() => router.replace("/(root)/(tabs)/home")} className="mt-5"/>
+              <CustomButton 
+                title="Browser Home"
+                onPress={() => {
+                  setShowSuccessModel(false);
+                  router.push("/(root)/(tabs)/home");
+                }} 
+                className="mt-5"/>
 
             </View>
           </ReactNativeModal>
