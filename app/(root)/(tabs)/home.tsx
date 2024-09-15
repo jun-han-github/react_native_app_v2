@@ -2,7 +2,10 @@ import GoogleTextInput from "@/components/GoogleTextInput";
 import Map from "@/components/Map";
 import RideCard from "@/components/RideCard";
 import { icons, images } from "@/constants";
+import { useLocationStore } from "@/store";
 import { useUser } from "@clerk/clerk-expo";
+import * as Location from "expo-location";
+import { useEffect, useState } from "react";
 import { FlatList, View, Text, Image, ActivityIndicator, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -16,10 +19,11 @@ const recentRides = [
       "destination_latitude": "28.209583",
       "destination_longitude": "83.985567",
       "ride_time": 391,
-      "fare_price": "19500.00",
+      "fare_price": 19500.00,
       "payment_status": "paid",
       "driver_id": 2,
       "user_id": "1",
+      "user_email": "example1@gmail.com",
       "created_at": "2024-08-12 05:19:20.620007",
       "driver": {
           "driver_id": "2",
@@ -40,10 +44,11 @@ const recentRides = [
       "destination_latitude": "18.520430",
       "destination_longitude": "73.856744",
       "ride_time": 491,
-      "fare_price": "24500.00",
+      "fare_price": 24500.00,
       "payment_status": "paid",
       "driver_id": 1,
       "user_id": "1",
+      "user_email": "example2@gmail.com",
       "created_at": "2024-08-12 06:12:17.683046",
       "driver": {
           "driver_id": "1",
@@ -64,10 +69,11 @@ const recentRides = [
       "destination_latitude": "45.327063",
       "destination_longitude": "14.442176",
       "ride_time": 124,
-      "fare_price": "6200.00",
+      "fare_price": 6200.00,
       "payment_status": "paid",
       "driver_id": 1,
       "user_id": "1",
+      "user_email": "example3@gmail.com",
       "created_at": "2024-08-12 08:49:01.809053",
       "driver": {
           "driver_id": "1",
@@ -88,10 +94,11 @@ const recentRides = [
       "destination_latitude": "34.693725",
       "destination_longitude": "135.502254",
       "ride_time": 159,
-      "fare_price": "7900.00",
+      "fare_price": 7900.00,
       "payment_status": "paid",
       "driver_id": 3,
       "user_id": "1",
+      "user_email": "example4@gmail.com",
       "created_at": "2024-08-12 18:43:54.297838",
       "driver": {
           "driver_id": "3",
@@ -106,11 +113,40 @@ const recentRides = [
 ];
 
 export default function Page() {
+  const { setUserLocation, setDestinationLocation } = useLocationStore();
   const { user } = useUser();
   const loading = false;
 
+  const [hasPermissions, setHasPermissions] = useState(false);
+
   const handleSignOut = () => {};
   const handleDestinationPress = () => {};
+
+  useEffect(() => {
+    const requestLocation = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== 'granted') {
+        setHasPermissions(false);
+        return;
+      };
+
+      let location = await Location.getCurrentPositionAsync();
+  
+      const address = await Location.reverseGeocodeAsync({
+        latitude: location.coords?.latitude!,
+        longitude: location.coords?.longitude!,
+      });
+  
+      setUserLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        address: `${address[0].name}, ${address[0].region}`
+      });
+    };
+
+    requestLocation();
+  }, []);
 
   return (
     <SafeAreaView>
