@@ -6,9 +6,10 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import Map from "./Map";
 
-const RideLayout = ({ title, children }: { title?: string; children: ReactNode }) => {
+const RideLayout = ({ title, children, snapPoints }: { title?: string; children: ReactNode, snapPoints?: string[] }) => {
 
     const bottomSheetRef =  useRef<BottomSheet>(null);
+
     return <GestureHandlerRootView>
         <View className="flex-1 bg-white">
             <View className="flex flex-col h-screen bg-blue-500">
@@ -29,7 +30,7 @@ const RideLayout = ({ title, children }: { title?: string; children: ReactNode }
 
             <BottomSheet 
                 ref={bottomSheetRef}
-                snapPoints={['40%', '85%']}
+                snapPoints={snapPoints || ['40%', '85%']}
                 index={0}
             >
                 <BottomSheetView style={{ flex: 1, padding: 20 }}>
