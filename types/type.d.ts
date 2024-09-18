@@ -97,6 +97,12 @@ declare interface PaymentProps {
   rideTime: number;
 }
 
+interface LocationProps {
+  latitude: number;
+  longitude: number;
+  address: string;
+}
+
 declare interface LocationStore {
   userLatitude: number | null;
   userLongitude: number | null;
