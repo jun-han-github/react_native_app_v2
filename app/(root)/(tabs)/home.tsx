@@ -3,8 +3,10 @@ import Map from "@/components/Map";
 import RideCard from "@/components/RideCard";
 import { icons, images } from "@/constants";
 import { useLocationStore } from "@/store";
+import { LocationProps } from "@/types/type";
 import { useUser } from "@clerk/clerk-expo";
 import * as Location from "expo-location";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, View, Text, Image, ActivityIndicator, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -120,7 +122,10 @@ export default function Page() {
   const [hasPermissions, setHasPermissions] = useState(false);
 
   const handleSignOut = () => {};
-  const handleDestinationPress = () => {};
+  const handleDestinationPress = (location: LocationProps) => {
+    setDestinationLocation(location);
+    router.push("/(root)/find-ride")
+  };
 
   useEffect(() => {
     const requestLocation = async () => {
