@@ -1,10 +1,15 @@
-import { Text, View } from "react-native"
+import CustomButton from "./CustomButton";
 
 const Payment = () => {
+
+    const openPaymentSheet = async () => {};
+
     return (
-        <View>
-            <Text>Payment</Text>
-        </View>
+        <CustomButton
+            title="Confirm Ride"
+            className="my-10"
+            onPress={openPaymentSheet}
+        />
     )
 }
 

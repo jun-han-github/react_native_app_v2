@@ -5,8 +5,7 @@ import RideLayout from "@/components/RideLayout";
 import { icons } from "@/constants";
 import { formatTime } from "@/libs/utils";
 import { useDriverStore, useLocationStore } from "@/store";
-import { router } from "expo-router";
-import CustomButton from "@/components/CustomButton";
+import Payment from "@/components/Payment";
 
 const BookRide = () => {
     const { user } = useUser();
@@ -91,13 +90,7 @@ const BookRide = () => {
                     </View>
                 </View>
 
-                <View>
-                    <CustomButton
-                        title="Find My Ride"
-                        className="mt-5"
-                        onPress={() => router.push("/(root)/confirm-ride")}
-                    />
-                </View>
+                <Payment />
             </>
         </RideLayout>
     );
