@@ -1,5 +1,5 @@
 import React from "react";
-import {Image, Text, TouchableOpacity, View} from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import { icons } from "@/constants";
 import { formatTime } from "@/libs/utils";
@@ -42,7 +42,7 @@ const DriverCard = ({ item, selected, setSelected }: DriverCardProps) => {
                     </Text>
 
                     <Text className="text-sm text-general-800">
-                        {formatTime(item.time!)}
+                        { formatTime(parseInt(`${item.time}`)) }
                     </Text>
 
                     <Text className="text-sm text-general-800 mx-1">
