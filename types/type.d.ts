@@ -89,14 +89,6 @@ declare interface InputFieldProps extends TextInputProps {
   className?: string;
 }
 
-declare interface PaymentProps {
-  fullName: string;
-  email: string;
-  amount: string;
-  driverId: number;
-  rideTime: number;
-}
-
 interface LocationProps {
   latitude: number;
   longitude: number;
@@ -142,4 +134,12 @@ declare interface DriverCardProps {
   item: MarkerData;
   selected: string;
   setSelected: () => void;
+}
+
+declare interface PaymentProps {
+  fullName: string;
+  email: string;
+  amount: string;
+  driverId: number;
+  rideTime: number;
 }
