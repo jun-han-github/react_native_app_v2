@@ -4,6 +4,10 @@ import { Alert } from "react-native";
 import { useState } from "react";
 import { fetchAPI } from "@/libs/fetch";
 import { PaymentProps } from "@/types/type";
+import { useLocationStore } from "@/store";
+import { useAuth } from "@clerk/clerk-expo";
+import { IntentCreationCallbackParams } from "@stripe/stripe-react-native/lib/typescript/src/types/PaymentSheet";
+import { Result } from "@stripe/stripe-react-native/lib/typescript/src/types/PaymentMethod";
 const Payment = ({
     fullName,
     email,
@@ -14,8 +18,13 @@ const Payment = ({
 
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const [success, setSuccess] = useState(false);
+    const { userId } = useAuth();
+    const { userAddress, userLatitude, userLongitude, destinationAddress, destinationLatitude, destinationLongitude } = useLocationStore();
 
-    const confirmHandler = async (paymentMethod, _, intentCreationCallback) => {
+    const confirmHandler = async (
+        paymentMethod: Result,
+        _: Boolean,
+        intentCreationCallback: (result: IntentCreationCallbackParams) => void): Promise<void> => {
 
         const { paymentIntent, customer } = await fetchAPI("/(api)/(stripe)/create", {
             method: "POST",
@@ -44,16 +53,33 @@ const Payment = ({
             });
 
             if (result.client_secret) {
-                // TODO: create the ride
-            }
-        }
+                await fetchAPI("/(api)/ride/create", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        origin_address: userAddress,
+                        destination_address: destinationAddress,
+                        origin_latitude: userLatitude,
+                        origin_longitude: userLongitude, 
+                        destination_latitude: destinationLatitude, 
+                        destination_longitude: destinationLongitude, 
+                        ride_time: rideTime.toFixed(0), 
+                        fare_price: parseInt(amount) * 100, 
+                        payment_status: 'paid',
+                        driver_id: driverId,
+                        user_id: userId,
+                    })
+                });
 
-        const { clientSecret, error } = await myServerResponse.json();
-        if (clientSecret) {
-            intentCreationCallback({clientSecret});
-        } else {
-            intentCreationCallback({error});
-        }
+                intentCreationCallback({
+                    clientSecret: result.client_secret
+                });
+            };
+
+            console.log("[PAYMENT RESULT]: ", result);
+        };
     };
 
     const initializePaymentSheet = async () => {
@@ -66,6 +92,7 @@ const Payment = ({
                 },
                 confirmHandler: confirmHandler
             },
+            returnURL:'myapp"//book-ride',
         })
         
         if (error) {
