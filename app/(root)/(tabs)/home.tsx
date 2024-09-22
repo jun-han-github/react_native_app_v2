@@ -5,7 +5,7 @@ import { icons, images } from "@/constants";
 import { useFetch } from "@/libs/fetch";
 import { useLocationStore } from "@/store";
 import { LocationProps } from "@/types/type";
-import { useUser } from "@clerk/clerk-expo";
+import { SignedOut, useUser } from "@clerk/clerk-expo";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -16,11 +16,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Page() {
   const { setUserLocation, setDestinationLocation } = useLocationStore();
   const { user } = useUser();
-  const { data, loading } = useFetch(`/(api)/ride/${user?.id}`);
+  const { data: recentRides, loading } = useFetch(`/(api)/ride/${user?.id}`);
 
   const [hasPermissions, setHasPermissions] = useState(false);
 
-  const handleSignOut = () => {};
+  const handleSignOut = () => {
+    // SignedOut(null);
+
+    router.replace("/(auth)/sign-in");
+  };
   const handleDestinationPress = (location: LocationProps) => {
     setDestinationLocation(location);
     router.push("/(root)/find-ride")
@@ -55,7 +59,7 @@ export default function Page() {
   return (
     <SafeAreaView>
       <FlatList
-        data={data}
+        data={recentRides}
         renderItem={
           ({ item }) => <RideCard ride={item} />
         }
