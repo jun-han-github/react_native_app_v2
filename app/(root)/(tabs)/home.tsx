@@ -5,7 +5,7 @@ import { icons, images } from "@/constants";
 import { useFetch } from "@/libs/fetch";
 import { useLocationStore } from "@/store";
 import { LocationProps, Ride } from "@/types/type";
-import { SignedOut, useUser } from "@clerk/clerk-expo";
+import { useAuth, useUser } from "@clerk/clerk-expo";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -16,13 +16,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Page() {
   const { setUserLocation, setDestinationLocation } = useLocationStore();
   const { user } = useUser();
+  const { signOut } = useAuth();
   const { data: recentRides, loading } = useFetch<Ride[]>(`/(api)/ride/${user?.id}`);
 
-  const [hasPermissions, setHasPermissions] = useState(false);
-
   const handleSignOut = () => {
-    // SignedOut(null);
-
+    signOut();
     router.replace("/(auth)/sign-in");
   };
   const handleDestinationPress = (location: LocationProps) => {
@@ -35,7 +33,7 @@ export default function Page() {
       let { status } = await Location.requestForegroundPermissionsAsync();
 
       if (status !== 'granted') {
-        setHasPermissions(false);
+        console.log('Request location is not granted.');
         return;
       };
 

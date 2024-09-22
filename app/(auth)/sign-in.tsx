@@ -5,7 +5,7 @@ import { icons, images } from "@/constants";
 import { useSignIn } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Alert, Image, ScrollView, Text, View } from "react-native";
 
 const SignIn = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -21,20 +21,35 @@ const SignIn = () => {
       return;
     }
 
+    if (!form.email) {
+      Alert.alert('Email input is empty');
+      return;
+    }
+
+    if (!form.email.includes('@')) {
+      Alert.alert('Email format is incorrect');
+      return;
+    }
+
+    if (!form.password) {
+      Alert.alert('Password input is empty');
+      return;
+    }
+
     try {
       const signInAttempt = await signIn.create({
         identifier: form.email,
         password: form.password,
-      })
+      });
 
       if (signInAttempt.status === 'complete') {
-        await setActive({ session: signInAttempt.createdSessionId })
-        router.replace('/')
+        await setActive({ session: signInAttempt.createdSessionId });
+        router.replace('/');
       } else {
-        console.error(JSON.stringify(signInAttempt, null, 2))
+        console.error(JSON.stringify(signInAttempt, null, 2));
       }
     } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2))
+      console.error(`Error Signing in: ${err.errors[0].longMessage}`);
     }
   }, [isLoaded, form.email, form.password])
 
