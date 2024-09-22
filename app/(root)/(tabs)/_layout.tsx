@@ -45,7 +45,7 @@ const Layout = () => {
         />
 
         <Tabs.Screen
-            name="history"
+            name="ride_history"
             options={{
                 title: 'Rides',
                 headerShown: false,
